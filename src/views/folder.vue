@@ -38,6 +38,7 @@ export default {
   margin: 0 auto;
   &-item {
     font-size: 0.65rem;
+    transition: all .5s;
   }
 }
 .grid-folder {

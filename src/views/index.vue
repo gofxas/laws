@@ -1,5 +1,6 @@
 <template >
-  <div class="page">
+  <Notfound v-if="is404" />
+  <div class="page" v-else>
     <div class="page-head">
       <router-link to="/">首页</router-link>
       <router-link v-for="path in navs" :key="path.link" :to="path.link">{{
@@ -10,6 +11,11 @@
     <Folder v-if="type == 'folder'" :list="list" :type="listType" />
     <div class="page-footer">
       <!-- <el-button @click="Test">Test</el-button> -->
+      <div class="foot-search">
+        <div class="foot-search-input" @click="search">
+          输入关键词查询
+        </div>
+      </div>
       <span class="status">
         {{ listType == "grid" ? "缩略图" : "列表" }}
       </span>
@@ -26,18 +32,25 @@
 <script>
 import File from "./file.vue";
 import Folder from "./folder.vue";
+import Notfound from "./404.vue";
 export default {
   name: "page",
-  components: { File, Folder },
+  components: { File, Folder, Notfound },
   data() {
     return {
       type: "folder",
       paths: [],
       list: null,
       listType: "list",
+      is404: false,
     };
   },
   watch: {
+    type(n) {
+      if (!this.is404) {
+        document.querySelector(".root-content").scrollTop = 0;
+      }
+    },
     $route: {
       handler(n, o) {
         const path = n.path;
@@ -61,19 +74,26 @@ export default {
     },
   },
   methods: {
+    search() {
+      this.$router.push('/search')
+    },
     async Test() {
       await this.list.forEach(async (item) => {
         if (item.isFile) {
-          const path = item.folder+'/'+item.name+(item.publish?`(${item.publish})`:'');
-          await this.TestURL(path)
+          const path =
+            item.folder +
+            "/" +
+            item.name +
+            (item.publish ? `(${item.publish})` : "");
+          await this.TestURL(path);
         }
       });
-      console.log('test ok')
+      console.log("test ok");
     },
     async TestURL(link) {
       const r = await fetch("/database/" + link + ".md");
       if (r.status == 404) {
-        console.error(link, 'link not ok')
+        console.error(link, "link not ok");
       }
     },
     async getPage(path) {
@@ -99,10 +119,11 @@ export default {
         }
       }
       this.list = list;
-      if (is404) {
-        // console.log(first)
-        this.$router.replace("/404");
-      }
+      // if (is404) {
+      //   // console.log(first)
+      //   this.$router.replace("/404");
+      // }
+      this.is404 = is404;
     },
   },
 };
@@ -153,6 +174,22 @@ export default {
   background-color: #fff;
   .status {
     padding: 0 0.2rem;
+  }
+  .foot-search {
+    flex: 1;
+    &-input {
+      height: 1rem;
+      background-color: #eee;
+      width: 10rem;
+      font-size: .6rem;
+      color: #666;
+      padding: 0 .5rem;
+      border-radius: .5rem;
+    }
+  }
+  .search {
+    width: 1rem;
+    height: 1rem;
   }
 }
 </style>

@@ -27,7 +27,7 @@ export default {
       try {
         const r = await fetch("/database/" + path + ".md");
         if (r.status == 404) {
-        //   this.$router.push("/404");
+          this.$router.push("/404");
         }
         const res = await r.text();
         this.value = res;

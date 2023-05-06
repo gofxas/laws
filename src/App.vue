@@ -1,7 +1,12 @@
 <template>
   <div class="root-layout">
+    <div v-if="loading" class="cover">
+      <img src="/loading.svg" alt="">
+      <p>中国法律法规</p>
+      <p class="title">法律内容来源于国家法律法规数据库</p>
+    </div>
     <div 
-    v-if="!loading"
+    v-else
     class="root-content" ref="content">
       <RouterView ></RouterView>
     </div>
@@ -74,7 +79,9 @@ export default {
             });
             this.$menus.setMenus(menus);
             // this.menus = menus;
-            this.loading = false;
+            setTimeout(() => {
+              this.loading = false;
+            }, 20)
           });
       });
   },
@@ -130,5 +137,24 @@ body {
   margin: 0;
   color: #333;
   font-size: 13px;
+}
+.cover {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  img {
+    width: 4rem;
+    height: 4rem;
+  }
+  p:not(.title) {
+    font-size: .7rem;
+    font-weight: bold;
+  }
+  p.title {
+    font-size: .6rem;
+    margin: 0;
+  }
 }
 </style>
